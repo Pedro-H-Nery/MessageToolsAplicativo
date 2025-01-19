@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Clipboard
 } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type RootStackParamList = {
@@ -21,10 +22,10 @@ type RootStackParamList = {
   Configuracoes: { usuario: any }; // Adiciona a tela de Configuracoes ao tipo
 };
 
-type MenuScreenRouteProp = RouteProp<RootStackParamList, 'Menu'>;
 type MenuScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Menu'>;
 
-const Menu = ({ route }: { route: MenuScreenRouteProp }) => {
+const Menu = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'Menu'>>();
   const navigation = useNavigation<MenuScreenNavigationProp>();
   const { usuario } = route.params;
 

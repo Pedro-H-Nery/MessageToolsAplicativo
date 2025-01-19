@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { useNavigation, RouteProp } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type RootStackParamList = {
@@ -19,10 +20,10 @@ type RootStackParamList = {
   Historico: { usuario: any };
 };
 
-type HistoricoScreenRouteProp = RouteProp<RootStackParamList, 'Historico'>;
 type HistoricoScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Historico'>;
 
-const Historico = ({ route }: { route: HistoricoScreenRouteProp }) => {
+const Historico = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'Historico'>>();
   const navigation = useNavigation<HistoricoScreenNavigationProp>();
   const { usuario } = route.params;
   const [historico, setHistorico] = useState<any>(null);

@@ -31,9 +31,16 @@ export default function Cadastro({ navigation }: { navigation: any }) {
   ]);
 
   const atualizarTipo = (index: number, campo: keyof Tipo, valor: any) => {
-    const novosTipos = [...tipos];
-    novosTipos[index][campo] = valor;
-    setTipos(novosTipos);
+    if(valor == 'nenhuma'){
+      const novosTipos = [...tipos];
+      novosTipos[index][campo] = valor;
+      novosTipos[index].valores = []; // Limpa os valores
+      setTipos(novosTipos);
+    }else{
+      const novosTipos = [...tipos];
+      novosTipos[index][campo] = valor;
+      setTipos(novosTipos);
+    }
   };
 
   const adicionarTipo = () => {
@@ -175,7 +182,7 @@ export default function Cadastro({ navigation }: { navigation: any }) {
                     styles.radioSelected,
                 ]}
               >
-                <Text style={styles.radioLabel}>Palavras-Chave</Text>
+                <Text style={styles.radioLabel}>Palavras- Chave</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
@@ -189,7 +196,7 @@ export default function Cadastro({ navigation }: { navigation: any }) {
                 <Text style={styles.radioLabel}>Assuntos</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => atualizarTipo(index, 'tipoClassificacao', 'nenhum')}
+                onPress={() => atualizarTipo(index, 'tipoClassificacao', 'nenhuma')}
                 style={[
                   styles.radioButton,
                   tipo.tipoClassificacao === 'nenhuma' && styles.radioSelected,

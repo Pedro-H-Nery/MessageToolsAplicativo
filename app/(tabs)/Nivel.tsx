@@ -22,7 +22,6 @@ type NivelScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Nivel'
 const Nivel = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'Nivel'>>();
   const navigation = useNavigation<NivelScreenNavigationProp>();
-
   const { usuario, nivelSelecionado } = route.params;
   const [data, setData] = useState<NivelData[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);

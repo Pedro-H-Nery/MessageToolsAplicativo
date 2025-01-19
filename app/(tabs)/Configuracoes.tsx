@@ -9,8 +9,9 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 type RootStackParamList = {
   Menu: { usuario: any };
@@ -24,10 +25,12 @@ type Tipo = {
   valores: string[];
 };
 
+type ConfiguracoesScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Configuracoes'>;
+
 export default function Configuracoes() {
   const route = useRoute<RouteProp<RootStackParamList, 'Configuracoes'>>();
+  const navigation = useNavigation<ConfiguracoesScreenNavigationProp>();
   const { usuario } = route.params;
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [tipos, setTipos] = useState<Tipo[]>([]);
 
   // Função que preenche os tipos com base nos dados do usuário
@@ -36,13 +39,13 @@ export default function Configuracoes() {
       const tiposUsuario = Object.keys(usuario.tipos).map((nivel) => {
         const tipo = usuario.tipos[nivel];
         const numerosFormatados = tipo.numeros.map((numero: string) => {
-          return numero.slice(0, 2) + numero.slice(2, 4) + "9" + numero.slice(4, 12);
+          return numero.slice(0, 2) + numero.slice(2, 4) + numero.slice(4, 12);
         });
         return {
           nome: nivel,
-          tipoClassificacao: tipo.tipoClassificacao === 0 ? 'palavrasChave' : 'assuntos' as 'palavrasChave' | 'assuntos', // Garantir que seja do tipo literal correto
+          tipoClassificacao: tipo.tipoClassificacao === 0 ? 'palavrasChave' : (tipo.tipoClassificacao === 1 ? 'assuntos' : 'nenhuma') as 'palavrasChave' | 'assuntos' | 'nenhuma', // Garantir que seja do tipo literal correto
           numeros: numerosFormatados || [],
-          valores: tipo[tipo.tipoClassificacao === 0 ? 'palavrasChave' : 'assuntos'] || [],
+          valores: (tipo.tipoClassificacao === 2 ? [] : tipo[tipo.tipoClassificacao === 0 ? 'palavrasChave' : 'assuntos']) || [],
         };
       });
       setTipos(tiposUsuario); // Agora o tipo de 'tiposUsuario' corresponde ao tipo esperado
@@ -50,9 +53,16 @@ export default function Configuracoes() {
   }, [usuario]);
 
   const atualizarTipo = (index: number, campo: keyof Tipo, valor: any) => {
-    const novosTipos = [...tipos];
-    novosTipos[index][campo] = valor;
-    setTipos(novosTipos);
+    if(valor == 'nenhuma'){
+      const novosTipos = [...tipos];
+      novosTipos[index][campo] = valor;
+      novosTipos[index].valores = []; // Limpa os valores
+      setTipos(novosTipos);
+    }else{
+      const novosTipos = [...tipos];
+      novosTipos[index][campo] = valor;
+      setTipos(novosTipos);
+    }
   };
 
   const adicionarTipo = () => {
@@ -81,7 +91,7 @@ export default function Configuracoes() {
       idUsuario: usuario.idUsuario,
       tipos: tipos.reduce((acc: Record<string, any>, tipo) => {
         acc[tipo.nome] = {
-          tipoClassificacao: tipo.tipoClassificacao === 'palavrasChave' ? 0 : 1,
+          tipoClassificacao: tipo.tipoClassificacao === 'palavrasChave' ? 0 : (tipo.tipoClassificacao === 'assuntos' ? 1 : 2),
           [tipo.tipoClassificacao]: tipo.valores,
           numeros: tipo.numeros,
         };
@@ -174,7 +184,7 @@ export default function Configuracoes() {
                   tipo.tipoClassificacao === 'palavrasChave' && styles.radioSelected,
                 ]}
               >
-                <Text style={styles.radioLabel}>Palavras-Chave</Text>
+                <Text style={styles.radioLabel}>Palavras- Chave</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
@@ -187,10 +197,25 @@ export default function Configuracoes() {
               >
                 <Text style={styles.radioLabel}>Assuntos</Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  atualizarTipo(index, 'tipoClassificacao', 'nenhuma')
+                }
+                style={[
+                  styles.radioButton,
+                  tipo.tipoClassificacao === 'nenhuma' && styles.radioSelected,
+                ]}
+              >
+                <Text style={styles.radioLabel}>Nenhuma</Text>
+              </TouchableOpacity>
             </View>
 
             <Text style={styles.subLabel}>
-              {tipo.tipoClassificacao === 'palavrasChave' ? 'Palavras-Chave' : 'Assuntos'}
+            {tipo.tipoClassificacao === 'palavrasChave'
+              ? 'Palavras-Chave'
+              : tipo.tipoClassificacao === 'assuntos'
+              ? 'Assuntos'
+              : ''}
             </Text>
             <TextInput
               style={styles.input}
@@ -198,7 +223,10 @@ export default function Configuracoes() {
               onChangeText={(text) =>
                 atualizarTipo(index, 'valores', text.split(',').map((v) => v.trim()))
               }
-              placeholder={`Digite ${tipo.tipoClassificacao} separados por vírgula`}
+              placeholder={
+                tipo.tipoClassificacao === 'nenhuma' ? '' : `Digite ${tipo.tipoClassificacao} separados por vírgula`
+              }
+              editable={tipo.tipoClassificacao !== 'nenhuma'}
             />
 
             <Button
