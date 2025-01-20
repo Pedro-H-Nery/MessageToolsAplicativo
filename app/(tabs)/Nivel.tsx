@@ -31,7 +31,7 @@ const Nivel = () => {
     let isMounted = true;
     const fetchNivelData = async () => {
       try {
-        const response = await fetch('https://message-tools-backend.vercel.app/api/nivel', {
+        const response = await fetch('http://192.168.18.3:3000/api/nivel', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ const Nivel = () => {
 
   const handleResolver = async (nivel: string, numero: string) => {
     try {
-      const response = await fetch('https://message-tools-backend.vercel.app/api/resolver', {
+      const response = await fetch('http://192.168.18.3:3000/api/resolver', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

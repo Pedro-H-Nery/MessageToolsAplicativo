@@ -83,7 +83,7 @@ export default function Cadastro({ navigation }: { navigation: any }) {
       }, {}),
     };
     try {
-      const response = await fetch('https://message-tools-backend.vercel.app/api/cadastro', {
+      const response = await fetch('http://192.168.18.3:3000/api/cadastro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

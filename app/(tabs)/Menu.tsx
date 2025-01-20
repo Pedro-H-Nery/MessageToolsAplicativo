@@ -47,7 +47,7 @@ const Menu = () => {
   };
 
   // URL para conectar o WhatsApp
-  const conectarWhatsAppUrl = `https://message-tools-backend.vercel.app`;
+  const conectarWhatsAppUrl = `http://192.168.18.3:3000`;
 
   const copyToClipboard = () => {
     Clipboard.setString(conectarWhatsAppUrl);

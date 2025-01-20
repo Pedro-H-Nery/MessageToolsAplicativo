@@ -27,7 +27,7 @@ const Login = ({ navigation }: { navigation: any }) => {
 
     try {
       // Enviar dados para a API
-      const response = await fetch('https://message-tools-backend.vercel.app/api/login', {
+      const response = await fetch('http://192.168.18.3:3000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

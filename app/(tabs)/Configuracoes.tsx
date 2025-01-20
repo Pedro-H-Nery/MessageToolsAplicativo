@@ -100,7 +100,7 @@ export default function Configuracoes() {
     };
 
     try {
-      const response = await fetch('https://message-tools-backend.vercel.app/api/configurarTipos', {
+      const response = await fetch('http://192.168.18.3:3000/api/configurarTipos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
