@@ -34,7 +34,7 @@ const Historico = () => {
 
   // Carrega o histórico do usuário
   useEffect(() => {
-    fetch(`http://192.168.18.3:3000/api/historicoUsuario`, {
+    fetch(`https://message-tools-backend.vercel.app/api/historicoUsuario`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idUsuario: usuario.idUsuario }),
@@ -72,7 +72,7 @@ const Historico = () => {
 
   // Função para lidar com o botão "Voltar"
   const handleVoltar = (number: string, date: string) => {
-    fetch('http://192.168.18.3:3000/api/voltar', {
+    fetch('https://message-tools-backend.vercel.app/api/voltar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

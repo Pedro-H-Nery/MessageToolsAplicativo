@@ -28,10 +28,9 @@ const Nivel = () => {
 
   // Chama a API para carregar as mensagens e números do nível
   useEffect(() => {
-    let isMounted = true;
     const fetchNivelData = async () => {
       try {
-        const response = await fetch('http://192.168.18.3:3000/api/nivel', {
+        const response = await fetch('https://message-tools-backend.vercel.app/api/nivel', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -44,7 +43,7 @@ const Nivel = () => {
 
         const responseData = await response.json();
 
-        if (isMounted && response.ok) {
+        if (response.ok) {
           const nivelData = responseData.resposta;
           const formattedData = nivelData.numeros.map((numero: string) => ({
             nome: nivelData.mensagens[numero]?.nome || '',
@@ -62,15 +61,6 @@ const Nivel = () => {
 
     // Faz a chamada inicial
     fetchNivelData();
-
-    // Chama a API a cada 1 segundo
-    const intervalId = setInterval(fetchNivelData, 5000);
-
-    // Limpeza do intervalo quando o componente for desmontado
-    return () => {
-      isMounted = false;
-      clearInterval(intervalId);
-    };
   }, [usuario.idUsuario, nivelSelecionado]);
 
   const handleToggleExpand = (numero: string) => {
@@ -99,7 +89,7 @@ const Nivel = () => {
 
   const handleResolver = async (nivel: string, numero: string) => {
     try {
-      const response = await fetch('http://192.168.18.3:3000/api/resolver', {
+      const response = await fetch('https://message-tools-backend.vercel.app/api/resolver', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,6 +110,37 @@ const Nivel = () => {
         setData((prevData) => prevData.filter((item) => item.numero !== numero));
       } else {
         Alert.alert("Erro", resposta.message);
+      }
+    } catch (error) {
+      Alert.alert("Erro", "Erro ao tentar resolver.");
+    }
+  };
+
+  const handleRecarregar = async (nivel: string) => {
+    try {
+      const response = await fetch('https://message-tools-backend.vercel.app/api/nivel', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          idUsuario: usuario.idUsuario,
+          nomeNivel: nivel
+        }),
+      });
+
+      const resposta = await response.json();
+
+      if (response.ok) {
+        const nivelData = resposta.resposta;
+        const formattedData = nivelData.numeros.map((numero: string) => ({
+          nome: nivelData.mensagens[numero]?.nome || '',
+          numero: numero,
+          mensagens: nivelData.mensagens[numero]?.mensagens.join("\n") || "Sem mensagens",
+        })).filter((item: NivelData) => item.nome !== '');
+        setData(formattedData);
+      } else {
+        Alert.alert("Erro", "Falha ao carregar os dados do nível.");
       }
     } catch (error) {
       Alert.alert("Erro", "Erro ao tentar resolver.");
@@ -155,7 +176,12 @@ const Nivel = () => {
       />
 
       {/* Botão para voltar para o menu */}
-      <Button title="Voltar para Menu" onPress={() => navigation.navigate('Menu', { usuario })} />
+      <View style={styles.buttonBottom}>
+        <Button title="Recarregar Mensagens" onPress={() => handleRecarregar(nivelSelecionado)} />
+      </View>
+      <View style={styles.buttonBottom}>
+        <Button title="Voltar para Menu" onPress={() => navigation.navigate('Menu', { usuario })} />
+      </View>
     </View>
   );
 };
@@ -188,6 +214,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10,
     justifyContent: 'space-between',
+  },
+  buttonBottom: {
+    margin: 10,
   },
   messages: {
     marginTop: 10,
